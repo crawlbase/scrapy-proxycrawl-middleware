@@ -22,7 +22,7 @@ PROXYCRAWL_TOKEN = 'your token'
 
 # Enable the middleware
 DOWNLOADER_MIDDLEWARES = {
-    'scrapy_proxycrawl.ProxyCrawlMiddleware': 610,
+    'scrapy_proxycrawl.ProxyCrawlMiddleware': 610
 }
 ```
 
