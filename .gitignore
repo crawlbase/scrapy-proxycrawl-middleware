@@ -1,0 +1,4 @@
+*.pyc
+build
+proxycrawl.egg-info
+dist
