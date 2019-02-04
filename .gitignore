@@ -1,4 +1,4 @@
 *.pyc
 build
-proxycrawl.egg-info
+scrapy_proxycrawl_middleware.egg-info
 dist

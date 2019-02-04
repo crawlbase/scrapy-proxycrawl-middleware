@@ -1,14 +1,16 @@
-#!/usr/bin/env python
-
 """ProxyCrawl Scrapy middleware."""
 
-import sys
 import os
-from distutils.core import setup
+
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup, find_packages
 
 readme = open('README.md').read()
 
-setup(name = 'scrapy-proxycrawl-middleware',
+setup(
+    name = 'scrapy-proxycrawl-middleware',
     license = 'Apache-2.0',
     version = '1.0.0',
     description = 'Scrapy ProxyCrawl Proxy Middleware: ProxyCrawl interfacing middleware for Scrapy',
@@ -18,8 +20,8 @@ setup(name = 'scrapy-proxycrawl-middleware',
     author_email = 'info@proxycrawl.com',
     url = 'https://github.com/proxycrawl/scrapy-proxycrawl-middleware',
     keywords = 'scrapy middleware scraping scraper crawler crawling proxycrawl api',
-    packages = ['scrapy_proxycrawl'],
     include_package_data = True,
+    packages = find_packages(),
     classifiers = (
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',

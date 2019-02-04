@@ -1,5 +1,10 @@
-import urllib
 import logging
+try:
+    # For Python 3.0 and later
+    from urllib.parse import quote_plus
+except ImportError:
+    # Fall back to Python 2's
+    from urllib import quote_plus
 
 log = logging.getLogger('scrapy.proxycrawl')
 
@@ -18,6 +23,6 @@ class ProxyCrawlMiddleware(object):
             log.warning('Skipping ProxyCrawl API CALL disabled!')
             return
         if self.proxycrawl_url not in request.url:
-            new_url = 'https://api.proxycrawl.com/?token=%s&url=%s' % (self.proxycrawl_token, urllib.quote(request.url))
+            new_url = 'https://api.proxycrawl.com/?token=%s&url=%s' % (self.proxycrawl_token, quote_plus(request.url))
             log.debug('Using ProxyCrawl API, overridden URL is: %s' % (new_url))
             return request.replace(url=new_url)
