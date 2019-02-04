@@ -3,15 +3,17 @@
 Processes [Scrapy](http://scrapy.org/) requests using [ProxyCrawl](https://proxycrawl.com) services either with Normal or Javascript tokens
 
 
-## Installation
+## Installing
 
-Clone the repository inside your Scrapy project and run the following:
+Choose a way of installing:
 
+- Clone the repository inside your Scrapy project and run the following:
 ```bash
 python setup.py install
 ```
+- Or use [PyPi](https://pypi.org/project/scrapy-proxycrawl-middleware/) Python package manager. `pip install scrapy-proxycrawl-middleware`
 
-In your Scrapy `settings.py` add the following lines:
+Then in your Scrapy `settings.py` add the following lines:
 
 ```python
 # Activate the middleware
