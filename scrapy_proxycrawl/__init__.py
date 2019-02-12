@@ -1,6 +1,6 @@
 try:
     # Python 2
     from proxycrawl import ProxyCrawlMiddleware
-except ModuleNotFoundError:
+except ImportError:
     # Python 3
     from .proxycrawl import ProxyCrawlMiddleware
