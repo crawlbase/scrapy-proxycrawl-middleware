@@ -1,4 +1,6 @@
 import logging
+from .request import ProxyCrawlRequest
+
 try:
     # For Python 3.0 and later
     from urllib.parse import quote_plus
@@ -7,6 +9,7 @@ except ImportError:
     from urllib import quote_plus
 
 log = logging.getLogger('scrapy.proxycrawl')
+
 
 class ProxyCrawlMiddleware(object):
     def __init__(self, settings):
@@ -19,10 +22,45 @@ class ProxyCrawlMiddleware(object):
         return cls(crawler.settings)
 
     def process_request(self, request, spider):
+        """Process a request using the proxycrawl API if applicable"""
+
         if not self.proxycrawl_enabled:
             log.warning('Skipping ProxyCrawl API CALL disabled!')
-            return
+            return None
+
+        if not isinstance(request, ProxyCrawlRequest):
+            return None
+
         if self.proxycrawl_url not in request.url:
-            new_url = 'https://api.proxycrawl.com/?token=%s&url=%s' % (self.proxycrawl_token, quote_plus(request.url))
+            new_url = self._get_proxied_url(request)
             log.debug('Using ProxyCrawl API, overridden URL is: %s' % (new_url))
             return request.replace(url=new_url)
+
+    def process_response(self, request, response, spider):
+        """Process a response coming from proxycrawl API if applicable"""
+
+        if not isinstance(request, ProxyCrawlRequest):
+            return response
+
+        # Replace url again with the original url saved in request
+        from .response import ProxyCrawlTextResponse
+
+        return response.replace(
+            cls=ProxyCrawlTextResponse,
+            request=request,
+            url=request.original_url,
+            #proxied_url=request.url
+        )
+
+    def _get_proxied_url(self, request):
+        original_url_encoded = quote_plus(request.url, safe='')
+        proxycrawl_url = self.proxycrawl_url
+        proxycrawl_token = self.proxycrawl_token
+        proxycrawl_query_params = request.query_params_str  # 'country=US&device=desktop&page_wait=5000&ajax_wait=true'
+        proxied_url = '{}/?token={}&{}&url={}'.format(
+            proxycrawl_url,
+            proxycrawl_token,
+            proxycrawl_query_params,
+            original_url_encoded
+        )
+        return proxied_url
