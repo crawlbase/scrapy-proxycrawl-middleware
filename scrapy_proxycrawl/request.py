@@ -1,20 +1,22 @@
+import urllib
+
 from scrapy import Request
 
 
 class ProxyCrawlRequest(Request):
     """Scrapy ``Request`` subclass providing additional arguments for Proxy Crawl"""
 
-    def __init__(self, format='html', user_agent=None, page_wait=None, ajax_wait=False,
+    def __init__(self, url, original_url=None, response_format='html', user_agent=None, page_wait=None, ajax_wait=False,
                  css_click_selector=None, device='desktop', get_cookies=False,
                  get_headers=False, proxy_session=None, cookies_session=None,
-                 screenshot=False, scraper=None, autoparse=False, country=None, *args, **kwargs):
+                 screenshot=False, scraper=None, autoparse=False, country=None, **kwargs):
         """
         Initialize a new request
 
         Docs: https://proxycrawl.com/dashboard/api/docs
 
-        format: str
-            Indicates the response format, either json or html. Defaults to html
+        response_format: str
+            Indicates the response response_format, either json or html. Defaults to html
         user_agent: str
             If you want to make the request with a custom user agent, you can pass it here
         page_wait: int
@@ -48,8 +50,8 @@ class ProxyCrawlRequest(Request):
             Sessions expire in 300 seconds after the last API call.
         screenshot: boolean
             If you are using the javascript token, you can optionally pass &screenshot=true parameter to
-            get a screenshot in JPEG format of the whole crawled page. ProxyCrawl will send you back the screenshot_url
-            in the response headers (or in the json response if you use &format=json). The screenshot_url expires in
+            get a screenshot in JPEG response_format of the whole crawled page. ProxyCrawl will send you back the screenshot_url
+            in the response headers (or in the json response if you use &response_format=json). The screenshot_url expires in
             one hour.
         scraper: str
             Returns back the information parsed according to the specified scraper. Check the list of all
@@ -69,7 +71,8 @@ class ProxyCrawlRequest(Request):
         :param args: other args to be passed to Scrapy base Request constructor
         :param kwargs: other kwargs to be passed to Scrapy base Request constructor
         """
-        self.format = format
+        self.original_url = original_url if original_url else url  # Save url to replace it in response later
+        self.response_format = response_format
         self.user_agent = user_agent
         self.page_wait = page_wait
         self.ajax_wait = ajax_wait
@@ -83,5 +86,49 @@ class ProxyCrawlRequest(Request):
         self.scraper = scraper
         self.autoparse = autoparse
         self.country = country
+        self.query_params_str=self._build_query_params()
+        super().__init__(url, **kwargs)
 
-        super().__init__(*args, **kwargs)
+    def replace(self, *args, **kwargs):
+        """Create a new Request with the same attributes except for those
+        given new values.
+        """
+        for x in ['url', 'original_url', 'response_format', 'user_agent', 'page_wait',
+                  'ajax_wait', 'css_click_selector', 'device', 'get_cookies', 'get_headers',
+                  'proxy_session', 'cookies_session', 'screenshot', 'scraper', 'autoparse',
+                  'country', 'method', 'headers', 'body', 'cookies', 'meta', 'flags',
+                  'encoding', 'priority', 'dont_filter', 'callback', 'errback', 'cb_kwargs']:
+            kwargs.setdefault(x, getattr(self, x))
+        cls = kwargs.pop('cls', self.__class__)
+        return cls(*args, **kwargs)
+
+    def _build_query_params(self):
+        query_params = 'format={}'.format(self.response_format)
+        if self.user_agent:
+            query_params += "&user_agent={}".format(self.user_agent)
+        if self.page_wait:
+            query_params += "&page_wait={}".format(self.page_wait)
+        if self.ajax_wait:
+            query_params += "&ajax_wait=true"
+        if self.css_click_selector:
+            query_params += "&css_click_selector={}".format(self.css_click_selector)
+        if self.device:
+            query_params += "&device={}".format(self.device)
+        if self.get_cookies:
+            query_params += "&get_cookies=true"
+        if self.get_headers:
+            query_params += "&get_headers=true"
+        if self.proxy_session:
+            query_params += "&proxy_session={}".format(self.proxy_session)
+        if self.cookies_session:
+            query_params += "&cookies_session={}".format(self.cookies_session)
+        if self.screenshot:
+            query_params += "&screenshot=true"
+        if self.scraper:
+            query_params += "&scraper={}".format(self.scraper)
+        if self.autoparse:
+            query_params += "&autoparse=true"
+        if self.country:
+            query_params += "&country={}".format(self.country)
+        return query_params
+
