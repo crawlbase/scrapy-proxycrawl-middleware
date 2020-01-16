@@ -1,5 +1,7 @@
 import urllib
-
+import urllib.parse
+import copy
+from json import JSONEncoder
 from scrapy import Request
 
 
@@ -103,32 +105,15 @@ class ProxyCrawlRequest(Request):
         return cls(*args, **kwargs)
 
     def _build_query_params(self):
-        query_params = 'format={}'.format(self.response_format)
-        if self.user_agent:
-            query_params += "&user_agent={}".format(self.user_agent)
-        if self.page_wait:
-            query_params += "&page_wait={}".format(self.page_wait)
-        if self.ajax_wait:
-            query_params += "&ajax_wait=true"
-        if self.css_click_selector:
-            query_params += "&css_click_selector={}".format(self.css_click_selector)
-        if self.device:
-            query_params += "&device={}".format(self.device)
-        if self.get_cookies:
-            query_params += "&get_cookies=true"
-        if self.get_headers:
-            query_params += "&get_headers=true"
-        if self.proxy_session:
-            query_params += "&proxy_session={}".format(self.proxy_session)
-        if self.cookies_session:
-            query_params += "&cookies_session={}".format(self.cookies_session)
-        if self.screenshot:
-            query_params += "&screenshot=true"
-        if self.scraper:
-            query_params += "&scraper={}".format(self.scraper)
-        if self.autoparse:
-            query_params += "&autoparse=true"
-        if self.country:
-            query_params += "&country={}".format(self.country)
+        encoder = JSONEncoder()
+        # Prepare aprams from attributes
+        params = copy.deepcopy(self.__dict__)
+        params.pop('original_url')  # Remove param
+        params['format'] = params.pop('response_format')  # rename param
+        # Convert values proxy crawl compatible values (json-like, i.e True -> 'true')
+        # and ignore params with None or False value
+        params = [(k, encoder.encode(v).strip('"')) for k,v in params.items() if v]
+        # Make query string
+        query_params = urllib.parse.urlencode(params)
         return query_params
 
