@@ -33,7 +33,7 @@ class ProxyCrawlMiddleware(object):
 
         if self.proxycrawl_url not in request.url:
             new_url = self._get_proxied_url(request)
-            log.debug('Using ProxyCrawl API, overridden URL is: %s' % (new_url))
+            log.debug('Using ProxyCrawl API, Request overridden with URL: {}'.format(new_url))
             return request.replace(url=new_url)
 
     def process_response(self, request, response, spider):
@@ -44,7 +44,7 @@ class ProxyCrawlMiddleware(object):
 
         # Replace url again with the original url saved in request
         from .response import ProxyCrawlTextResponse
-
+        log.debug('Using ProxyCrawl API, Response overridden with URL: {}'.format(request.original_url))
         return response.replace(
             cls=ProxyCrawlTextResponse,
             request=request,
