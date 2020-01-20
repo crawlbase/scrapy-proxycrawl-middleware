@@ -32,7 +32,7 @@ class ProxyCrawlMiddleware(object):
             return None
 
         if self.proxycrawl_url not in request.url:
-            new_url = self._get_proxied_url(request)
+            new_url = self._get_proxied_url(request.url, request.query_params_str)
             log.debug('Using ProxyCrawl API, Request overridden with URL: {}'.format(new_url))
             return request.replace(url=new_url)
 
@@ -46,11 +46,14 @@ class ProxyCrawlMiddleware(object):
         log.debug('Using ProxyCrawl API, Response overridden with URL: {}'.format(request.original_url))
         return response.replace(url=request.original_url)
 
-    def _get_proxied_url(self, request):
-        original_url_encoded = quote_plus(request.url, safe='')
+    def _get_proxied_url(self, url, query_params):
+        """
+        Transform the url into a call to proxy crawl api, sending the target url as query parameter.
+        """
+        original_url_encoded = quote_plus(url, safe='')
         proxycrawl_url = self.proxycrawl_url
         proxycrawl_token = self.proxycrawl_token
-        proxycrawl_query_params = request.query_params_str  # 'country=US&device=desktop&page_wait=5000&ajax_wait=true'
+        proxycrawl_query_params = query_params
         proxied_url = '{}/?token={}&{}&url={}'.format(
             proxycrawl_url,
             proxycrawl_token,
