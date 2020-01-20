@@ -43,14 +43,8 @@ class ProxyCrawlMiddleware(object):
             return response
 
         # Replace url again with the original url saved in request
-        from .response import ProxyCrawlTextResponse
         log.debug('Using ProxyCrawl API, Response overridden with URL: {}'.format(request.original_url))
-        return response.replace(
-            cls=ProxyCrawlTextResponse,
-            request=request,
-            url=request.original_url,
-            #proxied_url=request.url
-        )
+        return response.replace(url=request.original_url)
 
     def _get_proxied_url(self, request):
         original_url_encoded = quote_plus(request.url, safe='')

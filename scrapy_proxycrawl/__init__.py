@@ -7,4 +7,3 @@ except ImportError:
     # Python 3
     from .proxycrawl import ProxyCrawlMiddleware
     from .request import ProxyCrawlRequest
-    from .response import ProxyCrawlResponse, ProxyCrawlTextResponse
