@@ -2,15 +2,16 @@
 
 Processes [Scrapy](http://scrapy.org/) requests using [ProxyCrawl](https://proxycrawl.com) services either with Normal or Javascript tokens
 
-
 ## Installing
 
 Choose a way of installing:
 
 - Clone the repository inside your Scrapy project and run the following:
+
 ```bash
 python setup.py install
 ```
+
 - Or use [PyPi](https://pypi.org/project/scrapy-proxycrawl-middleware/) Python package manager. `pip install scrapy-proxycrawl-middleware`
 
 Then in your Scrapy `settings.py` add the following lines:
@@ -27,6 +28,7 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_proxycrawl.ProxyCrawlMiddleware': 610
 }
 ```
+
 ## Usage
 
 Use the scrapy_proxycrawl.ProxyCrawlRequest instead of the scrapy built-in Request.
@@ -51,9 +53,8 @@ class ExampleScraper(Spider):
 
 The target url will be replaced with proxy crawl url and parameters will be encoded into the url by the middleware automatically.
 
-
 If you have questions or need help using the library, please open an issue or [contact us](https://proxycrawl.com/contact).
 
 ---
 
-Copyright 2020 ProxyCrawl
+Copyright 2021 ProxyCrawl
