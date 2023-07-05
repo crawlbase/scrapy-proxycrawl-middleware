@@ -1,3 +1,9 @@
+# DEPRECATION NOTICE
+
+> :warning: **IMPORTANT:** This package is no longer maintained or supported. For the latest updates, please use our new package at [scrapy-crawlbase-middleware](https://github.com/crawlbase-source/scrapy-crawlbase-middleware).
+
+---
+
 # ProxyCrawl API middleware for Scrapy
 
 Processes [Scrapy](http://scrapy.org/) requests using [ProxyCrawl](https://proxycrawl.com) services either with Normal or Javascript tokens

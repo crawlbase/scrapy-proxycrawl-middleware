@@ -12,7 +12,7 @@ readme = open('README.md').read()
 setup(
     name = 'scrapy-proxycrawl-middleware',
     license = 'Apache-2.0',
-    version = '1.1.0',
+    version = '1.2.0',
     description = 'Scrapy ProxyCrawl Proxy Middleware: ProxyCrawl interfacing middleware for Scrapy',
     long_description = readme,
     long_description_content_type = 'text/markdown',
